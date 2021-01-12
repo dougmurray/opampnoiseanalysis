@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """ Inverting Operational Amplifier Noise Calculation
 
+Takes into account all the noise sources in an inverting topology.
+
 Author: Douglass Murray
 
 """

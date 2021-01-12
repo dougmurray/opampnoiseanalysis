@@ -7,7 +7,7 @@ Author: Douglass Murray
 import numpy as np
 import matplotlib.pyplot as plt
 
-temp = 20 # C. room temp
+temp = 20 # C, room temp
 Rsource = 0
 Rin = 1000
 Rfeedback = 100000
@@ -36,8 +36,6 @@ RTINoise = gain * np.sqrt(np.square(invertedInputRTINoise) + np.square(noninvert
 maxNoiseBW = 1.57 * ampGainBW / gain
 lowFreqOfInterest = 1 # Hz
 highFreqOfInterest = 10000 # Hz
-print("Amplifier gain:", gain, " V/V")
-print("Max Noise BW:", maxNoiseBW, " Hz")
 
 if maxNoiseBW < highFreqOfInterest:
     RsourceIntegratedNoise = RsourceNoise * np.sqrt(maxNoiseBW - lowFreqOfInterest) # Vrms
@@ -55,6 +53,12 @@ invertedInputIntegratedNoise = ampCurrentNoise * Rin * Rfeedback / (Rin + Rfeedb
 
 integradedNoise = gain * np.sqrt(np.square(RsourceIntegratedNoise) + np.square(RinIntegratedNoise) + np.square(RfeedbackIntegratedNoise) + np.square(RnoninvertedIntegratedNoise) + np.square(noninvertedInputIntegratedNoise) + np.square(invertedInputIntegratedNoise)) # Vrms
 
-print("RTI Noise: ", RTINoise, " V/sqrt)Hz)")
+print("Rsource: ", Rsource, " Ohms")
+print("Rin: ", Rin, " Ohms")
+print("Rfeedback: ", Rfeedback, " Ohms")
+print("Rnoninverted: ", Rnoninverted, " Ohms")
+print("Amplifier gain:", gain, " V/V")
+print("Max Noise BW:", maxNoiseBW, " Hz")
+print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
 print("Noise over bandwidth: ", integradedNoise, " Vrms")
 # print(RsourceIntegratedNoise , RinIntegratedNoise, RfeedbackIntegratedNoise, RnoninvertedIntegratedNoise, noninvertedInputIntegratedNoise, invertedInputIntegratedNoise)

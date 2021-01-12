@@ -58,6 +58,11 @@ print("Rin: ", Rin, " Ohms")
 print("Rfeedback: ", Rfeedback, " Ohms")
 print("Rnoninverted: ", Rnoninverted, " Ohms")
 print("Amplifier gain:", gain, " V/V")
+
+print("Input amplifier Vnoise: ", ampVoltNoise, " V/sqrt(Hz)")
+print("Input amplifier Inoise: ", ampCurrentNoise, " A/sqrt(Hz)")
+print("Input amplifier GainBW: ", ampGainBW, " Hz\n")
+
 print("Max Noise BW:", maxNoiseBW, " Hz")
 print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
 print("Noise over bandwidth: ", integradedNoise, " Vrms")

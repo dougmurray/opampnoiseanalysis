@@ -23,8 +23,6 @@ def resistorNoise(resistor, temp=None):
     return resistorVoltageNoise
 
 # RTI Total Noise (V/sqrt(Hz))
-
-
 def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, atFreq=None, iNoiseAtOpAmpFreq=None):
     atFreq = 1000 if atFreq is None else atFreq # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default

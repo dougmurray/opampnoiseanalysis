@@ -12,6 +12,13 @@ import matplotlib.pyplot as plt
 from opampnoiseanalysis.opampnoise import *
 
 def genericOpAmpNoisePlot(freqs, vNoise, iNoise):
+    """Plots spectral voltage noise density of op-amp.
+
+    Args:
+        freqs: frequencies to plot along (x-axis)
+        vNoise: voltage noise per frequency 
+        iNoise: current noise per frequency
+    """
     plt.figure()
     plt.subplot(211)
     plt.loglog(freqs, vNoise, label="voltage noise")
@@ -32,6 +39,18 @@ def genericOpAmpNoisePlot(freqs, vNoise, iNoise):
 
 
 def invertingNoisePlot(Rsource, rOne, rTwo, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz=None):
+    """Plots spectral voltage noise density of inverting topology.
+
+    Args:
+        Rsource: Source resistance
+        rOne: Input resistor
+        rTwo: Feedback resistor 
+        vNoiseOneHz: op-amp voltage noise at low freq (based on datasheet)
+        vNoiseHighHz: op-amp voltage noise at high freq (based on datasheet)
+        iNoiseOneHz: op-amp current noise at low freq (based on datasheet)
+        iNoiseHighHz: op-amp current noise at high freq (based on datasheet)
+        iNoiseAtHz: frequency which op-amp current noise was take (based on datasheet), default=0
+    """
     iNoiseAtHz = 0 if iNoiseAtHz is None else iNoiseAtHz  # set iNoiseAtHz to 0 as default
     freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
 

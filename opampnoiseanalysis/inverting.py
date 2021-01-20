@@ -12,9 +12,16 @@ import matplotlib.image as img
 from opampnoiseanalysis.opampnoise import *
 
 def invertingTopoImageDisplay():
+    """Displays inverting op-amp topology pic."""
     os.system("open images/inverting.png")  # Will open in Preview.
 
 def resistorNoise(resistor, temp=None):
+    """Calculates Johnson–Nyquist noise (thermal noise) of resistors.
+
+    Args:
+        resistor: Resistor value (Ohm)
+        temp: Temperature of resistor, default 20 C
+    """
     # Resistors Johnson thermal noise
     temp = 20 if temp is None else temp # set temp at room temp as default
     k = 1.38e-23  # J/K, Boltzmann's constant

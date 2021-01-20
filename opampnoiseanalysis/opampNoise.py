@@ -1,42 +1,89 @@
 #!/usr/bin/env python3
-""" Intrinsic Operational Amplifier Noise Calculation
+""" Operational Amplifier Noise Model
 
-Plots voltage and current noise of operational amplifier.
+Takes op-amp intrinsic properties as inputs and outputs voltage
+and current noise over 1 - 1 MHz frequency range.
 
 Author: Douglass Murray
 
 """
 import numpy as np
-import matplotlib.pyplot as plt
 
-# TODO: have these imported from another script
-opampVNoiseDensityLowFreq = 6.5e-9 # V/sqrt(Hz)
-opampVNoiseDensityHighFreq = 3.0e-9 # V/sqrt(Hz)
-opampINoiseDensityLowFreq = 400e-15 # A/sqrt(Hz)
-opampINoiseDensityHighFreq = 6300e-15 # A/sqrt(Hz)
-opampINoiseDensityAtFreq = 0 # Hz
+# freqRange = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000, 2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
+# opAmpVnoise = np.array([])
+# opAmpInoise = np.array([])
+# vnoiseAtOneHz = 50e-9  # V/sqrt(Hz)
+# vnoiseAtHighHz = 8.0e-9  # V/sqrt(Hz)
+# inoiseAtOneHz = 200e-12  # A/sqrt(Hz)
+# inoiseAtHighHz = 1050e-12  # A/sqrt(Hz)
+# iNoiseAtFreq = 0  # Hz
+# uGBW = 1.0e6 # Hz
 
-freqs = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000, 2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
+def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtFreq=0):
+    """Op-amp intrinsic noise calculation.
 
-VNoiseAtFreq = np.array([])
-for i, element in enumerate(freqs):
-    VNoiseAtFreq = np.append(VNoiseAtFreq, (np.sqrt(np.square(opampVNoiseDensityHighFreq) + np.square(opampVNoiseDensityLowFreq) / element)))
-print(VNoiseAtFreq)
+    Args:
+        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet)
+        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
+        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
+        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
 
-INoiseAtFreq = np.array([])
-if opampINoiseDensityAtFreq == 0:
-    for i, element in enumerate(freqs):
-        INoiseAtFreq = np.append(INoiseAtFreq, np.sqrt(np.square(opampINoiseDensityLowFreq) + np.square(opampINoiseDensityHighFreq) / element))
-else:
-    for i, element in enumerate(freqs):
-        INoiseAtFreq = np.append(INoiseAtFreq, np.sqrt(np.square(opampINoiseDensityLowFreq) + np.square(opampINoiseDensityHighFreq) * np.square(element) / np.square(opampINoiseDensityAtFreq)))
-print(INoiseAtFreq)
+    Returns:
+        freqRange: frequency range, 1 - 1 MHz (Hz)
+        opAmpVnoise: op-amp voltage noise at frequencies in range (V/sqrt(Hz))
+        opAmpInoise: op-amp current noise at frequencies in range (A/sqrt(Hz))
+    """
+    freqRange = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000,
+                          2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
+    opAmpVnoise = np.array([])
+    opAmpInoise = np.array([])
+    for i, element in enumerate(freqRange):
+        vNoise = np.sqrt(np.square(vnoiseAtHighHz) + np.square(vnoiseAtOneHz) / element)
+        opAmpVnoise = np.append(opAmpVnoise, vNoise)
 
-plt.loglog(freqs, VNoiseAtFreq, label="Vnoise")
-plt.loglog(freqs, INoiseAtFreq, label="Inoise")
-plt.xlabel("Frequency (Hz)")
-plt.ylabel("Noise (V/sqrt(Hz)) or (A/sqrt(Hz))")
-plt.title("Intrinsic Op-amp Spectral Noise Density")
-plt.grid(True, which="minor")
-plt.legend()
-plt.show()
+    for i, element in enumerate(freqRange):
+        if not iNoiseAtFreq:
+            iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) / element)
+            opAmpInoise = np.append(opAmpInoise, iNoise)
+        else:
+            iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) + np.square(element) / np.square(iNoiseAtFreq))
+            opAmpInoise = np.append(opAmpInoise, iNoise)
+    
+    return freqRange, opAmpVnoise, opAmpInoise
+
+
+def opampVNoiseAtFreq(atFreq, vnoiseAtOneHz, vnoiseAtHighHz):
+    """Op-amp intrinsic voltage noise calculation at specified frequency.
+
+    Args:
+        atFreq: specified frequency, default=1000 (Hz)
+        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet) 
+        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
+
+    Returns:
+        opampVnoiseAtFreq: op-amp voltage noise at specified frequency (V/sqrt(Hz))
+    """
+    opampVnoiseAtFreq = np.sqrt(np.square(vnoiseAtHighHz) + np.square(vnoiseAtOneHz) / atFreq)
+    return opampVnoiseAtFreq
+
+
+def opampINoiseAtFreq(atFreq, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq=0):
+    """Op-amp intrinsic current noise calculation at specified frequency.
+
+    Args:
+        atFreq: specified frequency, default=1000 (Hz)
+        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
+        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
+        iNoiseAtOpAmpFreq: frequency which op-amp current noise was take (based on datasheet), default=0
+
+    Returns:
+        opampINoiseAtFreq: op-amp current noise at specified frequency (A/sqrt(Hz))
+    """
+    if not iNoiseAtOpAmpFreq:
+        opampINoiseAtFreq = np.sqrt(np.square(inoiseAtOneHz) +
+                         np.square(inoiseAtHighHz) / atFreq)
+    else:
+        opampINoiseAtFreq = np.sqrt(np.square(inoiseAtOneHz) + np.square(
+            inoiseAtHighHz) + np.square(element) / np.square(iNoiseAtOpAmpFreq))
+    
+    return opampINoiseAtFreq

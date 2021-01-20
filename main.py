@@ -32,10 +32,9 @@ def interface():
                 print("vNoise ", vNoise)
                 print("iNoise ", iNoise)
                 genericOpAmpNoisePlot(freq, vNoise, iNoise)
-                # noisePlotter(freq, vNoise, iNoise) # TODO: generic noise plotter
         elif choice == 2:
-            invertingTopoImageDisplay()
             try:
+                invertingTopoImageDisplay()
                 temp = float(input("Input temp (C): "))
                 Rsource = float(input("Input Rsource (Ohm): "))
                 rOne = float(input("Input R1 (Ohm): "))
@@ -55,9 +54,9 @@ def interface():
             except ValueError:
                 print("Invalid input")
             else:
-                invertingRTINoise()
-                invertingIntegratedNoise()
-                # noisePlotter(freq, vNoise, iNoise)  # TODO: generic noise plotter
+                invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, atFreq, iNoiseAtOpAmpFreq)
+                invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, atFreq, iNoiseAtOpAmpFreq)
+                invertingNoisePlot(Rsource, rOne, rTwo, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtOpAmpFreq)
         elif choice == 3:
             noninvertingTopoImageDisplay()
             noninvertingTopop()

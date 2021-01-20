@@ -9,11 +9,10 @@ Author: Douglass Murray
 import os
 import numpy as np
 import matplotlib.image as img
-# from opampnoiseanalysis.o   import opampnoise
 from opampnoiseanalysis.opampnoise import *
 
 def invertingTopoImageDisplay():
-    os.system("open ../images/inverting.png")  # Will open in Preview.
+    os.system("open images/inverting.png")  # Will open in Preview.
 
 def resistorNoise(resistor, temp=None):
     # Resistors Johnson thermal noise
@@ -40,7 +39,7 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
     RsourceNoise = resistorNoise(Rsource) # V/sqrt(Hz)
 
     RTINoise = gain * np.sqrt(np.square(invertedInputRTINoise) + np.square(noninvertedInputRTINoise) + np.square(RnoninvertedNoise) + np.square(RfeedbackNoise) + np.square(RinNoise) + np.square(RsourceNoise)) # V/sqrt(Hz)
-    print("Noise RTI: ", RTINoise, " V/sqrt(Hz)")
+    print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
     # return RTINoise
 
 # Integrated Noise over frequency (Vrms)

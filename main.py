@@ -9,6 +9,7 @@ Author: Douglass Murray
 import numpy as np
 from opampnoiseanalysis.opampnoise import *
 from opampnoiseanalysis.inverting import *
+from opampnoiseanalysis.plotter import *
 
 def interface():
     choice = int(input("Noise of (1) op-amp, (2) inverting topology, or (3) non-inverting topology: "))
@@ -23,6 +24,7 @@ def interface():
         print("Freq ", freq)
         print("vNoise ", vNoise)
         print("iNoise ", iNoise)
+        genericOpAmpNoisePlot(freq, vNoise, iNoise)
         # noisePlotter(freq, vNoise, iNoise) # TODO: generic noise plotter
     elif choice == 2:
         invertingTopoImageDisplay()

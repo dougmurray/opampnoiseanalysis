@@ -54,7 +54,7 @@ def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNo
     return freqRange, opAmpVnoise, opAmpInoise
 
 
-def opampVNoiseAtFreq(atFreq=None, vnoiseAtOneHz, vnoiseAtHighHz):
+def opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq=None):
     """Op-amp intrinsic voltage noise calculation at specified frequency.
 
     Args:
@@ -70,7 +70,7 @@ def opampVNoiseAtFreq(atFreq=None, vnoiseAtOneHz, vnoiseAtHighHz):
     return opampVnoiseAtFreq
 
 
-def opampINoiseAtFreq(atFreq=None, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtOpAmpFreq=None):
+def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
     """Op-amp intrinsic current noise calculation at specified frequency.
 
     Args:

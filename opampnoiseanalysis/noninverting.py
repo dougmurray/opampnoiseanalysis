@@ -10,7 +10,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def noninvertingTopoImageDisplay():
     os.system("open ../images/noninverting.png")  # Will open in Preview.
 

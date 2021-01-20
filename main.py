@@ -26,6 +26,7 @@ def interface():
         print("iNoise ", iNoise)
         # noisePlotter(freq, vNoise, iNoise) # TODO: generic noise plotter
     elif choice == 2:
+        invertingTopoImageDisplay()
         temp = float(input("Input temp (C): "))
         Rsource = float(input("Input Rsource (Ohm): "))
         Rin = float(input("Input Rin (Ohm): "))
@@ -46,6 +47,7 @@ def interface():
         invertingIntegratedNoise()
         # noisePlotter(freq, vNoise, iNoise)  # TODO: generic noise plotter
     elif choice == 3:
+        noninvertingTopoImageDisplay()
         noninvertingTopop()
         # noisePlotter(freq, vNoise, iNoise)  # TODO: generic noise plotter
     else:

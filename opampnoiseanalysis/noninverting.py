@@ -6,8 +6,13 @@ Takes into account all the noise sources in an inverting topology.
 Author: Douglass Murray
 
 """
+import os
 import numpy as np
 import matplotlib.pyplot as plt
+
+
+def noninvertingTopoImageDisplay():
+    os.system("open ../images/noninverting.png")  # Will open in Preview.
 
 temp = 20 # C, room temp
 Rsource = 0

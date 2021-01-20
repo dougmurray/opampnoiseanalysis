@@ -6,9 +6,14 @@ Takes into account all the noise sources in an inverting topology.
 Author: Douglass Murray
 
 """
+import os
 import numpy as np
-# from opampnoiseanalysis.o import opampnoise
+import matplotlib.image as img
+# from opampnoiseanalysis.o   import opampnoise
 from opampnoiseanalysis.opampnoise import *
+
+def invertingTopoImageDisplay():
+    os.system("open ../images/inverting.png")  # Will open in Preview.
 
 def resistorNoise(resistor, temp=20):
     # Resistors Johnson thermal noise

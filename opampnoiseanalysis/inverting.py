@@ -15,25 +15,28 @@ from opampnoiseanalysis.opampnoise import *
 def invertingTopoImageDisplay():
     os.system("open ../images/inverting.png")  # Will open in Preview.
 
-def resistorNoise(resistor, temp=20):
+def resistorNoise(resistor, temp=None):
     # Resistors Johnson thermal noise
+    temp = 20 if temp is None else temp # set temp at room temp as default
     k = 1.38e-23  # J/K, Boltzmann's constant
     resistorVoltageNoise = np.sqrt(4 * k * (temp + 273) * resistor)  # V/sqrt(Hz)
     return resistorVoltageNoise
 
 # RTI Total Noise (V/sqrt(Hz))
-def invertingRTINoise(Rsource, Rin, Rfeedback, atFreq, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq):
-    gain = Rfeedback / Rin
+def invertingRTINoise(Rsource, rOne, rTwo, rThree, atFreq=None, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq=None):
+    atFreq = 1000 if atFreq is None else atFreq # set atFreq to 1 kHz as default
+    iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
+    gain = rTwo / rOne
     # Op-amp specific parameters based on datasheet
     ampVoltNoise = opampVNoiseAtFreq(atFreq, vnoiseAtOneHz, vnoiseAtHighHz)
     ampCurrentNoise = opampINoiseAtFreq(atFreq, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq)
 
     # RTI Noise Contributions (V/sqrt(Hz))
-    invertedInputRTINoise = ampCurrentNoise * (Rsource + Rin) * Rfeedback / (Rsource + Rin + Rfeedback) # V/sqrt(Hz)
+    invertedInputRTINoise = ampCurrentNoise * (Rsource + rOne) * rTwo / (Rsource + rOne + rTwo) # V/sqrt(Hz)
     noninvertedInputRTINoise = ampVoltNoise # V/sqrt(Hz), direct contribution in inverted topology
-    RnoninvertedNoise = resistorNoise(Rnoninverted) # V/sqrt(Hz)
-    RfeedbackNoise = resistorNoise(Rfeedback) / gain # V/sqrt(Hz)
-    RinNoise = resistorNoise(Rin) # V/sqrt(Hz)
+    RnoninvertedNoise = resistorNoise(rThree) # V/sqrt(Hz)
+    RfeedbackNoise = resistorNoise(rTwo) / gain # V/sqrt(Hz)
+    RinNoise = resistorNoise(rOne) # V/sqrt(Hz)
     RsourceNoise = resistorNoise(Rsource) # V/sqrt(Hz)
 
     RTINoise = gain * np.sqrt(np.square(invertedInputRTINoise) + np.square(noninvertedInputRTINoise) + np.square(RnoninvertedNoise) + np.square(RfeedbackNoise) + np.square(RinNoise) + np.square(RsourceNoise)) # V/sqrt(Hz)
@@ -41,9 +44,15 @@ def invertingRTINoise(Rsource, Rin, Rfeedback, atFreq, vnoiseAtOneHz, vnoiseAtHi
     # return RTINoise
 
 # Integrated Noise over frequency (Vrms)
-def invertingIntegratedNoise(ampGainBW, Rin, Rfeedback, RsourceNoise, RinNoise, RnoninvertedNoise, lowFreqOfInterest, highFreqOfInterest, atFreq, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq):
-    gain = Rfeedback / Rin
+def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, atFreq=None, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq=None):
+    atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
+    iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
+    gain = rTwo / rOne
     maxNoiseBW = 1.57 * ampGainBW / gain
+    RnoninvertedNoise = resistorNoise(rThree)  # V/sqrt(Hz)
+    RfeedbackNoise = resistorNoise(rTwo) / gain  # V/sqrt(Hz)
+    RinNoise = resistorNoise(rOne)  # V/sqrt(Hz)
+    RsourceNoise = resistorNoise(Rsource)  # V/sqrt(Hz)
     # Op-amp specific parameters based on datasheet
     ampVoltNoise = opampVNoiseAtFreq(atFreq, vnoiseAtOneHz, vnoiseAtHighHz)
     ampCurrentNoise = opampINoiseAtFreq(atFreq, inoiseAtHighHz, inoiseAtOneHz, iNoiseAtOpAmpFreq)
@@ -60,10 +69,9 @@ def invertingIntegratedNoise(ampGainBW, Rin, Rfeedback, RsourceNoise, RinNoise, 
         RnoninvertedIntegratedNoise = RnoninvertedNoise * np.sqrt(highFreqOfInterest - lowFreqOfInterest) # Vrms
     
     noninvertedInputIntegratedNoise = ampVoltNoise # Vrms, direct contribution in inverted topology
-    invertedInputIntegratedNoise = ampCurrentNoise * Rin * Rfeedback / (Rin + Rfeedback) # Vrms
+    invertedInputIntegratedNoise = ampCurrentNoise * rOne * rTwo / (rOne + rTwo) # Vrms
     
-    integradedNoise = gain * np.sqrt(np.square(RsourceIntegratedNoise) + np.square(RinIntegratedNoise) + np.square(RfeedbackIntegratedNoise) + np.square(
-        RnoninvertedIntegratedNoise) + np.square(noninvertedInputIntegratedNoise) + np.square(invertedInputIntegratedNoise))  # Vrms
+    integradedNoise = gain * np.sqrt(np.square(RsourceIntegratedNoise) + np.square(RinIntegratedNoise) + np.square(RfeedbackIntegratedNoise) + np.square(RnoninvertedIntegratedNoise) + np.square(noninvertedInputIntegratedNoise) + np.square(invertedInputIntegratedNoise))  # Vrms
     
     print("Max Noise BW:", maxNoiseBW, " Hz")
     print("Noise over bandwidth: ", integradedNoise, " Vrms")

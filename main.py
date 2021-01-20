@@ -19,8 +19,7 @@ def interface():
         iNoiseOneHz = float(input("Inoise @ 1 Hz: "))
         iNoiseHighHz = float(input("Inoise @ 10 MHz: "))
         iNoiseAtHz = float(input("Inoise Freq (default = 0): "))
-        freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz,
-                   iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
+        freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
         print("Freq ", freq)
         print("vNoise ", vNoise)
         print("iNoise ", iNoise)

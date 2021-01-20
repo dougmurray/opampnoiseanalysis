@@ -21,6 +21,9 @@ def resistorNoise(resistor, temp=None):
     Args:
         resistor: Resistor value (Ohm)
         temp: Temperature of resistor, default 20 C
+    
+    Returns:
+        resistorVoltageNoise: thermal voltage noise of resistor
     """
     # Resistors Johnson thermal noise
     temp = 20 if temp is None else temp # set temp at room temp as default

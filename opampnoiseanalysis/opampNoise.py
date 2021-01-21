@@ -8,6 +8,8 @@ Author: Douglass Murray
 
 """
 import numpy as np
+import pandas as pd
+from opampnoiseanalysis.plotter import *
 
 # freqRange = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000, 2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
 # opAmpVnoise = np.array([])
@@ -92,3 +94,47 @@ def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpF
             inoiseAtHighHz) + np.square(element) / np.square(iNoiseAtOpAmpFreq))
     
     return opampINoiseAtFreq
+
+def opampChooseInput():
+    try:
+        opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
+    except ValueError:
+        print("Invalid input")
+    else:
+        if opampChoice == 1:        
+            try:
+                # direct input of op-amp values
+                vNoiseOneHz = float(input("Vnoise @ 1 Hz: "))
+                vNoiseHighHz = float(input("Vnoise @ 10 MHz: "))
+                iNoiseOneHz = float(input("Inoise @ 1 Hz: "))
+                iNoiseHighHz = float(input("Inoise @ 10 MHz: "))
+                iNoiseAtHz = float(input("Inoise Freq (default = 0): "))
+            except ValueError:
+                print("Invalid input")
+            else:
+                freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
+                print("Freq ", freq)
+                print("vNoise ", vNoise)
+                print("iNoise ", iNoise)
+                genericOpAmpNoisePlot(freq, vNoise, iNoise)
+        elif opampChoice == 2:
+            try:
+                opampName = str(input("Input op-amp name: "))
+            except ValueError:
+                print("Invalid input")
+            else:
+                # Search and pick op-amp
+                # csv format: Device, VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq
+                opamps = pd.read_csv('./opampdata/opampData.csv')
+                oneAmp = opamps.loc[opamps['Device'] == opampName]
+                specificAmp = oneAmp.to_numpy(copy=True) # Pandas has to be > version 0.24
+                VnoiseLow = oneAmp[0, 1]
+                VnoiseHigh = oneAmp[0, 2]
+                InoiseLow = oneAmp[0, 3]
+                InoiseHigh = oneAmp[0, 4]
+                InoiseSpecFreq = oneAmp[0, 5]
+                freq, vNoise, iNoise = opAmpNoise(VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq)
+                print("Freq ", freq)
+                print("vNoise ", vNoise)
+                print("iNoise ", iNoise)
+                genericOpAmpNoisePlot(freq, vNoise, iNoise)

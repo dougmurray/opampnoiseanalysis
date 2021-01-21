@@ -7,6 +7,7 @@ Author: Douglass Murray
 
 """
 import numpy as np
+import pandas as pd
 from opampnoiseanalysis.opampnoise import *
 from opampnoiseanalysis.inverting import *
 from opampnoiseanalysis.plotter import *
@@ -18,20 +19,7 @@ def interface():
         print("Invalid input")
     else:
         if choice == 1:
-            try:
-                vNoiseOneHz = float(input("Vnoise @ 1 Hz: "))
-                vNoiseHighHz = float(input("Vnoise @ 10 MHz: "))
-                iNoiseOneHz = float(input("Inoise @ 1 Hz: "))
-                iNoiseHighHz = float(input("Inoise @ 10 MHz: "))
-                iNoiseAtHz = float(input("Inoise Freq (default = 0): "))
-            except ValueError:
-                print("Invalid input")
-            else:
-                freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
-                print("Freq ", freq)
-                print("vNoise ", vNoise)
-                print("iNoise ", iNoise)
-                genericOpAmpNoisePlot(freq, vNoise, iNoise)
+            opampChooseInput()
         elif choice == 2:
             try:
                 invertingTopoImageDisplay()
@@ -71,4 +59,5 @@ if __name__ == '__main__':
     print("/ /_/ / /_/ /  / ___ |/ / / / / / /_/ /  / /|  / /_/ / (__  )  __/  / /___/ /_/ / / /__  ")
     print("\____/ .___/  /_/  |_/_/ /_/ /_/ .___/  /_/ |_/\____/_/____/\___/   \____/\__,_/_/\___/  ")
     print("    /_/                       /_/                                                       " )
+    
     interface()

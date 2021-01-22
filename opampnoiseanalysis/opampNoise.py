@@ -97,11 +97,8 @@ def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpF
     return opampINoiseAtFreq
 
 def opampChooseInput():
-    try:
+    while True:
         opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
-    except ValueError:
-        print("Invalid input")
-    else:
         if opampChoice == 1:        
             try:
                 # direct input of op-amp values
@@ -145,3 +142,4 @@ def opampChooseInput():
         else:
             print("Please choose either (1) op-amp values or (2) pick op-amp: ")
             # opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
+            continue

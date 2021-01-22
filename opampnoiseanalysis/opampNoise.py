@@ -56,7 +56,6 @@ def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNo
     
     return freqRange, opAmpVnoise, opAmpInoise
 
-
 def opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq=None):
     """Op-amp intrinsic voltage noise calculation at specified frequency.
 
@@ -71,7 +70,6 @@ def opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq=None):
     atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
     opampVnoiseAtFreq = np.sqrt(np.square(vnoiseAtHighHz) + np.square(vnoiseAtOneHz) / atFreq)
     return opampVnoiseAtFreq
-
 
 def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
     """Op-amp intrinsic current noise calculation at specified frequency.
@@ -123,11 +121,11 @@ def opampChooseInput():
             else:
                 # Search and pick op-amp
                 # csv format: Device, VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq
-                opamps = pd.read_csv('./opampdata/opampData.csv') # works
-                oneAmp = opamps.loc[opamps['Device'] == opampName] # works
+                opamps = pd.read_csv('./opampdata/opampData.csv')
+                oneAmp = opamps.loc[opamps['Device'] == opampName]
                 # if Pandas version is < version 0.24
                 specificAmp = oneAmp.values
-                # Pandas has to be > version 0.24
+                # if Pandas version is > version 0.24
                 # specificAmp = oneAmp.to_numpy(copy=True)
                 VnoiseLow = specificAmp[0, 1]
                 VnoiseHigh = specificAmp[0, 2]

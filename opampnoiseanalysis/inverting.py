@@ -67,8 +67,6 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
     # return RTINoise
 
 # Integrated Noise over frequency (Vrms)
-
-
 def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
     """Calculates integrated noise of inverting op-amp topology.
 

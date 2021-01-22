@@ -21,7 +21,10 @@ def interface():
             continue
         else:
             if choice == 1:
-                opampChooseInput()
+                vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz = opampChooseInput()
+                freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
+                print(freq, vNoise, iNoise)
+                genericOpAmpNoisePlot(freq, vNoise, iNoise)
             elif choice == 2:
                 try:
                     invertingTopoImageDisplay()

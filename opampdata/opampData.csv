@@ -1,8 +1,8 @@
-Device,VnoiseLow,VnoiseHigh,InoiseLow,InoiseHigh,InoiseSpecFreq
-ADA4898,4.0e-9,0.85e-9,10.0e-12,2.5e-12,0
-LT6018,3.0e-9,6.0e-9,200e-12,3.1e-12,0
-AD8597,6.5e-9,1.2e-9,20e-12,3.5e-12,0
-AD8599,6.5e-9,1.2e-9,20e-12,3.5e-12,0
-ADA4807,15e-9,20e-9,25e-12,0.75e-12,0
-OPA227,6.5e-9,3.0e-9,400e-12,6300e-12,0
-OPA277,50e-9,8e-9,200e-12,1050e-12,0
+Device,VnoiseLow,VnoiseHigh,InoiseLow,InoiseHigh,InoiseSpecFreq,UGBW
+ADA4898,4.0e-9,0.85e-9,10.0e-12,2.5e-12,0,65e6
+LT6018,3.0e-9,6.0e-9,200e-12,3.1e-12,0,15e6
+AD8597,6.5e-9,1.2e-9,20e-12,3.5e-12,0,10e6
+AD8599,6.5e-9,1.2e-9,20e-12,3.5e-12,0,10e6
+ADA4807,15e-9,20e-9,25e-12,0.75e-12,0,180e6
+OPA227,6.5e-9,3.0e-9,400e-12,6300e-12,0,8e6
+OPA277,50e-9,8e-9,200e-12,1050e-12,0,1e6

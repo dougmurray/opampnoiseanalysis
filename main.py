@@ -21,35 +21,32 @@ def interface():
             continue
         else:
             if choice == 1:
-                vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz = opampChooseInput()
-                freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz)
+                vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGBW = opampChooseInput()
+                freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGBW)
                 print(freq, vNoise, iNoise)
                 genericOpAmpNoisePlot(freq, vNoise, iNoise)
             elif choice == 2:
-                try:
-                    invertingTopoImageDisplay()
-                    temp = float(input("Input temp (C): "))
-                    Rsource = float(input("Input Rsource (Ohm): "))
-                    rOne = float(input("Input R1 (Ohm): "))
-                    rTwo = float(input("Input R2 (Ohm): "))
-                    rThree = float(input("Input R3 (Ohm): "))
-                    atFreq = float(input("Input center freq (Hz): "))
-                    lowFreqOfInterest = float(input("Input lower freq of interest (Hz): "))
-                    highFreqOfInterest = float(input("Input upper freq of interest (Hz): "))
+                invertingTopoImageDisplay()
+                temp = float(input("Input temp (C): "))
+                Rsource = float(input("Input Rsource (Ohm): "))
+                rOne = float(input("Input R1 (Ohm): "))
+                rTwo = float(input("Input R2 (Ohm): "))
+                rThree = float(input("Input R3 (Ohm): "))
+                atFreq = float(input("Input center freq (Hz): "))
+                lowFreqOfInterest = float(input("Input lower freq of interest (Hz): "))
+                highFreqOfInterest = float(input("Input upper freq of interest (Hz): "))
 
-                    # Op-amp specific parameters based on datasheet
-                    ampGainBW = float(input("Input op-amp unity gain BW (Hz): "))
-                    vnoiseAtOneHz = float(input("Input op-amp Vnoise @ 1 Hz (V/sqrt(Hz): "))
-                    vnoiseAtHighHz = float(input("Input op-amp Vnoise @ 10 MHz (V/sqrt(Hz): "))
-                    inoiseAtOneHz = float(input("Input op-amp Inoise @ 1 Hz (A/sqrt(Hz): "))
-                    inoiseAtHighHz = float(input("Input op-amp Inoise @ 10 MHz (A/sqrt(Hz): "))
-                    iNoiseAtOpAmpFreq = float(input("Input op-amp Inoise freq (default = 0 Hz): "))
-                except ValueError:
-                    print("Invalid input")
-                else:
-                    invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq, iNoiseAtOpAmpFreq)
-                    invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq, iNoiseAtOpAmpFreq)
-                    invertingNoisePlot(Rsource, rOne, rTwo, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtOpAmpFreq)
+                # Op-amp specific parameters based on datasheet
+                vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGainBW = opampChooseInput()
+
+                # Integrated noise over frequency
+                maxNoiseBW, integradedNoise = invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz)
+                print("Max Noise BW:", maxNoiseBW, " Hz")
+                print("Noise over bandwidth: ", integradedNoise, " Vrms")
+                
+                # Totatl RTI noise
+                RTINoise = invertingRTINoise(Rsource, rOne, rTwo, rThree, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz)
+                print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
             elif choice == 3:
                 noninvertingTopoImageDisplay()
                 noninvertingTopop()

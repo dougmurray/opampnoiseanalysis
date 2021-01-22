@@ -63,8 +63,7 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
     RsourceNoise = resistorNoise(Rsource) # V/sqrt(Hz)
 
     RTINoise = gain * np.sqrt(np.square(invertedInputRTINoise) + np.square(noninvertedInputRTINoise) + np.square(RnoninvertedNoise) + np.square(RfeedbackNoise) + np.square(RinNoise) + np.square(RsourceNoise)) # V/sqrt(Hz)
-    print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
-    # return RTINoise
+    return RTINoise
 
 # Integrated Noise over frequency (Vrms)
 def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
@@ -112,7 +111,4 @@ def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, hig
     invertedInputIntegratedNoise = ampCurrentNoise * rOne * rTwo / (rOne + rTwo) # Vrms
     
     integradedNoise = gain * np.sqrt(np.square(RsourceIntegratedNoise) + np.square(RinIntegratedNoise) + np.square(RfeedbackIntegratedNoise) + np.square(RnoninvertedIntegratedNoise) + np.square(noninvertedInputIntegratedNoise) + np.square(invertedInputIntegratedNoise))  # Vrms
-    
-    print("Max Noise BW:", maxNoiseBW, " Hz")
-    print("Noise over bandwidth: ", integradedNoise, " Vrms")
-    # return integradedNoise
+    return maxNoiseBW, integradedNoise

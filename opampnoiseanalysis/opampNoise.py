@@ -21,7 +21,8 @@ from opampnoiseanalysis.plotter import *
 # iNoiseAtOpAmpFreq = 0  # Hz
 # uGBW = 1.0e6 # Hz
 
-def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtOpAmpFreq=None):
+
+def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtOpAmpFreq=None, ampGBW=None):
     """Op-amp intrinsic noise calculation.
 
     Args:
@@ -37,6 +38,7 @@ def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNo
         opAmpInoise: op-amp current noise at frequencies in range (A/sqrt(Hz))
     """
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq  # set iNoiseAtOpAmpFreq to 0 as default
+    ampGBW = 1e6 if ampGBW is None else ampGBW # set unity gain bandwidth to resonable default if not included
     freqRange = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000,
                           2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
     opAmpVnoise = np.array([])
@@ -102,10 +104,11 @@ def opampChooseInput():
         iNoiseOneHz = float(input("Inoise @ 1 Hz: "))
         iNoiseHighHz = float(input("Inoise @ 10 MHz: "))
         iNoiseAtHz = float(input("Inoise Freq (default = 0): "))
+        ampGBW = float(input("Input op-amp unity gain BW (Hz): "))
     elif opampChoice == 2:
         opampName = str(input("Input op-amp name: "))
         # Search and pick op-amp
-        # csv format: Device, VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq
+        # csv format: Device, VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq, UGBW
         opamps = pd.read_csv('./opampdata/opampData.csv')
         oneAmp = opamps.loc[opamps['Device'] == opampName]
         # if Pandas version is < version 0.24
@@ -117,6 +120,7 @@ def opampChooseInput():
         iNoiseOneHz = specificAmp[0, 3]
         iNoiseHighHz = specificAmp[0, 4]
         iNoiseAtHz = specificAmp[0, 5]
+        ampGBW = specificAmp[0,6]
     else:
         print("Please choose either (1) op-amp values or (2) pick op-amp.")
-    return vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz
+    return vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGBW

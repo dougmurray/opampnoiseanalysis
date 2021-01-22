@@ -29,7 +29,7 @@ def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNo
         vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
         inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
         inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
-        iNoiseAtOpAmpFreq: frequency which op-amp current noise was take (based on datasheet), default=0
+        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
 
     Returns:
         freqRange: frequency range, 1 - 1 MHz (Hz)
@@ -80,7 +80,7 @@ def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpF
         atFreq: specified frequency, default=1000 (Hz)
         inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
         inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
-        iNoiseAtOpAmpFreq: frequency which op-amp current noise was take (based on datasheet), default=0
+        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
 
     Returns:
         opampINoiseAtFreq: op-amp current noise at specified frequency (A/sqrt(Hz))
@@ -140,6 +140,5 @@ def opampChooseInput():
                 print("iNoise ", iNoise)
                 genericOpAmpNoisePlot(freq, vNoise, iNoise)
         else:
-            print("Please choose either (1) op-amp values or (2) pick op-amp: ")
-            # opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
+            print("Please choose either (1) op-amp values or (2) pick op-amp.")
             continue

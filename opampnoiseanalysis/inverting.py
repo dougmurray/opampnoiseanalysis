@@ -32,7 +32,21 @@ def resistorNoise(resistor, temp=None):
     return resistorVoltageNoise
 
 # RTI Total Noise (V/sqrt(Hz))
-def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+    """Calculates RTI noise of inverting op-amp topology.
+
+    Args:
+        Rsource: Source resistance
+        rOne: Input resistor
+        rTwo: Feedback resistor 
+        rThree: Noninverted input resistor (which is usally tied to GND)
+        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet)
+        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
+        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
+        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
+        atFreq: user specified frequency
+        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+    """
     atFreq = 1000 if atFreq is None else atFreq # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
     gain = rTwo / rOne
@@ -53,7 +67,26 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
     # return RTINoise
 
 # Integrated Noise over frequency (Vrms)
-def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtHighHz, inoiseAtOneHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+
+
+def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+    """Calculates integrated noise of inverting op-amp topology.
+
+    Args:
+        Rsource: Source resistance
+        rOne: Input resistor
+        rTwo: Feedback resistor 
+        rThree: Noninverted input resistor (which is usally tied to GND)
+        lowFreqOfInterest: low frequency of user interest
+        highFreqOfInterest: high frequency of user interest
+        ampGainBW: op-amp unity gain bandwidth (based on datasheet)
+        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet)
+        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
+        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
+        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
+        atFreq: user specified frequency
+        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+    """
     atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
     gain = rTwo / rOne

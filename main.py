@@ -13,6 +13,7 @@ from opampnoiseanalysis.inverting import *
 from opampnoiseanalysis.plotter import *
 
 def interface():
+    """General interface function for choosing which op-amp/topology to calculate noise."""
     while True:
         try:
             choice = int(input("Noise of (1) op-amp, (2) inverting topology, or (3) non-inverting topology: "))

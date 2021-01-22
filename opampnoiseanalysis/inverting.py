@@ -46,6 +46,9 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
         inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
         atFreq: user specified frequency
         iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+    
+    Returns:
+        RTINoise: total RTI noise
     """
     atFreq = 1000 if atFreq is None else atFreq # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
@@ -83,6 +86,10 @@ def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, hig
         inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
         atFreq: user specified frequency
         iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+    
+    Returns:
+        maxNoiseBW: maximum noise bandwidth
+        integradedNoise: integrated noise over user's frequency of interest
     """
     atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default

@@ -96,6 +96,19 @@ def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpF
     return opampINoiseAtFreq
 
 def opampChooseInput():
+    """Helper function for user to choose between inputing discrete vlaues or import via csv file.
+
+    Args:
+        None
+    
+    Returns:
+        vNoiseOneHz: op-amp voltage noise at low freq (based on datasheet) 
+        vNoiseHighHz: op-amp voltage noise at high freq (based on datasheet)
+        iNoiseOneHz: op-amp current noise at low freq (based on datasheet)
+        iNoiseHighHz: op-amp current noise at high freq (based on datasheet)
+        iNoiseAtHz: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        ampGBW: op-amp unity gain bandwidth
+    """
     opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
     if opampChoice == 1:        
         # direct input of op-amp values

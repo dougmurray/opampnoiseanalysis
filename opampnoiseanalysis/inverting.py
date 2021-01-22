@@ -32,7 +32,7 @@ def resistorNoise(resistor, temp=None):
     return resistorVoltageNoise
 
 # RTI Total Noise (V/sqrt(Hz))
-def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None, temp=None):
     """Calculates RTI noise of inverting op-amp topology.
 
     Args:
@@ -46,12 +46,14 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
         inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
         atFreq: user specified frequency
         iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        temp: temperature in C of resistors, default 20 (room temp)
     
     Returns:
         RTINoise: total RTI noise
     """
     atFreq = 1000 if atFreq is None else atFreq # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
+    temp = 20 if temp is None else temp  # set temp to room temp as default
     gain = rTwo / rOne
     # Op-amp specific parameters based on datasheet
     ampVoltNoise = opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq)
@@ -60,16 +62,16 @@ def invertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz
     # RTI Noise Contributions (V/sqrt(Hz))
     invertedInputRTINoise = ampCurrentNoise * (Rsource + rOne) * rTwo / (Rsource + rOne + rTwo) # V/sqrt(Hz)
     noninvertedInputRTINoise = ampVoltNoise # V/sqrt(Hz), direct contribution in inverted topology
-    RnoninvertedNoise = resistorNoise(rThree) # V/sqrt(Hz)
-    RfeedbackNoise = resistorNoise(rTwo) / gain # V/sqrt(Hz)
-    RinNoise = resistorNoise(rOne) # V/sqrt(Hz)
-    RsourceNoise = resistorNoise(Rsource) # V/sqrt(Hz)
+    RnoninvertedNoise = resistorNoise(rThree, temp) # V/sqrt(Hz)
+    RfeedbackNoise = resistorNoise(rTwo, temp) / gain # V/sqrt(Hz)
+    RinNoise = resistorNoise(rOne, temp) # V/sqrt(Hz)
+    RsourceNoise = resistorNoise(Rsource, temp) # V/sqrt(Hz)
 
     RTINoise = gain * np.sqrt(np.square(invertedInputRTINoise) + np.square(noninvertedInputRTINoise) + np.square(RnoninvertedNoise) + np.square(RfeedbackNoise) + np.square(RinNoise) + np.square(RsourceNoise)) # V/sqrt(Hz)
     return RTINoise
 
 # Integrated Noise over frequency (Vrms)
-def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None, temp=None):
     """Calculates integrated noise of inverting op-amp topology.
 
     Args:
@@ -86,6 +88,7 @@ def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, hig
         inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
         atFreq: user specified frequency
         iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        temp: temperature in C of resistors, default 20 (room temp)
     
     Returns:
         maxNoiseBW: maximum noise bandwidth
@@ -93,12 +96,13 @@ def invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, hig
     """
     atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
     iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
+    temp = 20 if temp is None else temp # set temp to room temp as default
     gain = rTwo / rOne
     maxNoiseBW = 1.57 * ampGainBW / gain
-    RnoninvertedNoise = resistorNoise(rThree)  # V/sqrt(Hz)
-    RfeedbackNoise = resistorNoise(rTwo) / gain  # V/sqrt(Hz)
-    RinNoise = resistorNoise(rOne)  # V/sqrt(Hz)
-    RsourceNoise = resistorNoise(Rsource)  # V/sqrt(Hz)
+    RnoninvertedNoise = resistorNoise(rThree, temp)  # V/sqrt(Hz)
+    RfeedbackNoise = resistorNoise(rTwo, temp) / gain  # V/sqrt(Hz)
+    RinNoise = resistorNoise(rOne, temp)  # V/sqrt(Hz)
+    RsourceNoise = resistorNoise(Rsource, temp)  # V/sqrt(Hz)
     # Op-amp specific parameters based on datasheet
     ampVoltNoise = opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq)
     ampCurrentNoise = opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq, iNoiseAtOpAmpFreq)

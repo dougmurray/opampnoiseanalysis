@@ -41,12 +41,12 @@ def interface():
                 vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGainBW = opampChooseInput()
 
                 # Integrated noise over frequency
-                maxNoiseBW, integradedNoise = invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz)
+                maxNoiseBW, integradedNoise = invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz, temp)
                 print("Max Noise BW:", maxNoiseBW, " Hz")
                 print("Noise over bandwidth: ", integradedNoise, " Vrms")
                 
                 # Totatl RTI noise
-                RTINoise = invertingRTINoise(Rsource, rOne, rTwo, rThree, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz)
+                RTINoise = invertingRTINoise(Rsource, rOne, rTwo, rThree, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz, temp)
                 print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
             elif choice == 3:
                 noninvertingTopoImageDisplay()

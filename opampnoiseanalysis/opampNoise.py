@@ -50,7 +50,8 @@ def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNo
             iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) / element)
             opAmpInoise = np.append(opAmpInoise, iNoise)
         else:
-            iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) + np.square(element) / np.square(iNoiseAtOpAmpFreq))
+            # This is a little off
+            iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) * np.square(element) / np.square(iNoiseAtOpAmpFreq))
             opAmpInoise = np.append(opAmpInoise, iNoise)
     
     return freqRange, opAmpVnoise, opAmpInoise
@@ -125,16 +126,22 @@ def opampChooseInput():
             else:
                 # Search and pick op-amp
                 # csv format: Device, VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq
-                opamps = pd.read_csv('./opampdata/opampData.csv')
-                oneAmp = opamps.loc[opamps['Device'] == opampName]
-                specificAmp = oneAmp.to_numpy(copy=True) # Pandas has to be > version 0.24
-                VnoiseLow = oneAmp[0, 1]
-                VnoiseHigh = oneAmp[0, 2]
-                InoiseLow = oneAmp[0, 3]
-                InoiseHigh = oneAmp[0, 4]
-                InoiseSpecFreq = oneAmp[0, 5]
+                opamps = pd.read_csv('./opampdata/opampData.csv') # works
+                oneAmp = opamps.loc[opamps['Device'] == opampName] # works
+                # if Pandas version is < version 0.24
+                specificAmp = oneAmp.values
+                # Pandas has to be > version 0.24
+                # specificAmp = oneAmp.to_numpy(copy=True)
+                VnoiseLow = specificAmp[0, 1]
+                VnoiseHigh = specificAmp[0, 2]
+                InoiseLow = specificAmp[0, 3]
+                InoiseHigh = specificAmp[0, 4]
+                InoiseSpecFreq = specificAmp[0, 5]
                 freq, vNoise, iNoise = opAmpNoise(VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq)
                 print("Freq ", freq)
                 print("vNoise ", vNoise)
                 print("iNoise ", iNoise)
                 genericOpAmpNoisePlot(freq, vNoise, iNoise)
+        else:
+            print("Please choose either (1) op-amp values or (2) pick op-amp: ")
+            # opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))

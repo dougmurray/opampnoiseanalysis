@@ -28,12 +28,13 @@ def interface():
                 genericOpAmpNoisePlot(freq, vNoise, iNoise)
             elif choice == 2:
                 invertingTopoImageDisplay()
+                # Topology specific parameters
                 temp = float(input("Input temp (C): "))
                 Rsource = float(input("Input Rsource (Ohm): "))
                 rOne = float(input("Input R1 (Ohm): "))
                 rTwo = float(input("Input R2 (Ohm): "))
                 rThree = float(input("Input R3 (Ohm): "))
-                atFreq = float(input("Input center freq (Hz): "))
+                atFreq = float(input("Input reference freq (Hz), default 1000: "))
                 lowFreqOfInterest = float(input("Input lower freq of interest (Hz): "))
                 highFreqOfInterest = float(input("Input upper freq of interest (Hz): "))
 

@@ -1,0 +1,41 @@
+opAmpChooseInput
+	returns:
+		vNoiseOneHz 
+		vNoiseHighHz
+		iNoiseOneHz 
+		iNoiseHighHz
+		iNoiseAtHz
+
+opAmpNoise
+	returns:
+		freq
+		vNoise
+		iNoise
+
+genericOpAmpNoisePlot
+	returns:
+		<matplotlib object>
+
+
+--------------------------------------
+
+[inputs for topology like resistors, etc are inputed via main.py]
+	-these are inputed with other parameters into below functions
+
+opampChooseInput
+	returns:
+		vNoiseOneHz
+		vNoiseHighHz
+		iNoiseOneHz
+		iNoiseHighHz
+		iNoiseAtHz
+		ampGainBW
+
+invertingIntegratedNoise
+	returns:
+		maxNoiseBW
+		integradedNoise
+
+invertingRTINoise
+	returns:
+		RTINoise

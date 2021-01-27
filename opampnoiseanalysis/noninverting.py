@@ -13,63 +13,51 @@ import matplotlib.pyplot as plt
 def noninvertingTopoImageDisplay():
     os.system("open ../images/noninverting.png")  # Will open in Preview.
 
-temp = 20 # C, room temp
-Rsource = 0
-Rin = 1000
-Rfeedback = 100000
+def resistorNoise(resistor, temp=None):
+    """Calculates Johnson–Nyquist noise (thermal noise) of resistors.
+
+    Args:
+        resistor: Resistor value (Ohm)
+        temp: Temperature of resistor, default 20 C
+    
+    Returns:
+        resistorVoltageNoise: thermal voltage noise of resistor
+    """
+    # Resistors Johnson thermal noise
+    temp = 20 if temp is None else temp # set temp at room temp as default
+    k = 1.38e-23  # J/K, Boltzmann's constant
+    resistorVoltageNoise = np.sqrt(4 * k * (temp + 273) * resistor)  # V/sqrt(Hz)
+    return resistorVoltageNoise
+
+
 gain = Rfeedback / Rin
-Rnoninverted = 0
 
-# TODO: have these as inputs from user
-ampVoltNoise = 3.01e-9 # V/sqrt(Hz)
-ampCurrentNoise = 4.47e-13 # A/sqrt(Hz)
-ampGainBW = 8e6 # Hz
+# RTI Total Noise (V/sqrt(Hz))
+def noninvertingRTINoise(Rsource, rOne, rTwo, rThree, vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None, temp=None):
+    """Calculates RTI noise of inverting op-amp topology.
 
-# RTI Noise Contributions (V/sqrt(Hz))
-invertedInputRTINoise = ampCurrentNoise * (Rsource + Rin) * Rfeedback / (Rsource + Rin + Rfeedback) # V/sqrt(Hz)
-noninvertedInputRTINoise = ampVoltNoise # V/sqrt(Hz), direct contribution in inverted topology
-# Resistors Johnson thermal noise
-k = 1.38e-23 # J/K, Boltzmann's constant
-RnoninvertedNoise = np.sqrt(4 * k * (temp + 273) * Rnoninverted) # V/sqrt(Hz)
-RfeedbackNoise = np.sqrt(4 * k * (temp + 273) * Rfeedback) / gain # V/sqrt(Hz)
-RinNoise = np.sqrt(4 * k * (temp + 273) * Rin) # V/sqrt(Hz)
-RsourceNoise = np.sqrt(4 * k * (temp + 273) * Rsource) # V/sqrt(Hz)
+    Args:
+        Rsource: Source resistance
+        rOne: Input resistor
+        rTwo: Feedback resistor 
+        rThree: Noninverted input resistor (which is usally tied to GND)
+        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet)
+        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
+        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
+        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
+        atFreq: user specified frequency
+        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        temp: temperature in C of resistors, default 20 (room temp)
+    
+    Returns:
+        RTINoise: total RTI noise
+    """
+    atFreq = 1000 if atFreq is None else atFreq # set atFreq to 1 kHz as default
+    iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq # set iNoiseAtOpAmpFreq to 0 as default
+    temp = 20 if temp is None else temp  # set temp to room temp as default
+    gain = rTwo / rOne
+    # Op-amp specific parameters based on datasheet
+    ampVoltNoise = opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq)
+    ampCurrentNoise = opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq, iNoiseAtOpAmpFreq)
 
-RTINoise = gain * np.sqrt(np.square(invertedInputRTINoise) + np.square(noninvertedInputRTINoise) + np.square(RnoninvertedNoise) + np.square(RfeedbackNoise) + np.square(RinNoise) + np.square(RsourceNoise)) # V/sqrt(Hz)
 
-
-# Integrated Noise over frequency (Vrms)
-maxNoiseBW = 1.57 * ampGainBW / gain
-lowFreqOfInterest = 1 # Hz
-highFreqOfInterest = 10000 # Hz
-
-if maxNoiseBW < highFreqOfInterest:
-    RsourceIntegratedNoise = RsourceNoise * np.sqrt(maxNoiseBW - lowFreqOfInterest) # Vrms
-    RinIntegratedNoise = RinNoise * np.sqrt(maxNoiseBW - lowFreqOfInterest) # Vrms
-    RfeedbackIntegratedNoise = np.sqrt(maxNoiseBW - lowFreqOfInterest) * RfeedbackNoise / gain # Vrms
-    RnoninvertedIntegratedNoise = RnoninvertedNoise * np.sqrt(maxNoiseBW - lowFreqOfInterest) # Vrms
-else:
-    RsourceIntegratedNoise = RsourceNoise * np.sqrt(highFreqOfInterest - lowFreqOfInterest) # Vrms
-    RinIntegratedNoise = RinNoise * np.sqrt(highFreqOfInterest - lowFreqOfInterest) # Vrms
-    RfeedbackIntegratedNoise = np.sqrt(highFreqOfInterest - lowFreqOfInterest) * RfeedbackNoise / gain # Vrms
-    RnoninvertedIntegratedNoise = RnoninvertedNoise * np.sqrt(highFreqOfInterest - lowFreqOfInterest) # Vrms
-
-noninvertedInputIntegratedNoise = ampVoltNoise # Vrms, direct contribution in inverted topology
-invertedInputIntegratedNoise = ampCurrentNoise * Rin * Rfeedback / (Rin + Rfeedback) # Vrms
-
-integradedNoise = gain * np.sqrt(np.square(RsourceIntegratedNoise) + np.square(RinIntegratedNoise) + np.square(RfeedbackIntegratedNoise) + np.square(RnoninvertedIntegratedNoise) + np.square(noninvertedInputIntegratedNoise) + np.square(invertedInputIntegratedNoise)) # Vrms
-
-print("Rsource: ", Rsource, " Ohms")
-print("Rin: ", Rin, " Ohms")
-print("Rfeedback: ", Rfeedback, " Ohms")
-print("Rnoninverted: ", Rnoninverted, " Ohms")
-print("Amplifier gain:", gain, " V/V")
-
-print("Input amplifier Vnoise: ", ampVoltNoise, " V/sqrt(Hz)")
-print("Input amplifier Inoise: ", ampCurrentNoise, " A/sqrt(Hz)")
-print("Input amplifier GainBW: ", ampGainBW, " Hz\n")
-
-print("Max Noise BW:", maxNoiseBW, " Hz")
-print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
-print("Noise over bandwidth: ", integradedNoise, " Vrms")
-# print(RsourceIntegratedNoise , RinIntegratedNoise, RfeedbackIntegratedNoise, RnoninvertedIntegratedNoise, noninvertedInputIntegratedNoise, invertedInputIntegratedNoise)

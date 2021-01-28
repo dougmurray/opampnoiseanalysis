@@ -8,7 +8,7 @@ Author: Douglass Murray
 """
 import numpy as np
 import pandas as pd
-from opampnoiseanalysis.opampnoise import *
+from opampnoiseanalysis.opamp_noise import *
 from opampnoiseanalysis.inverting import *
 from opampnoiseanalysis.plotter import *
 
@@ -22,37 +22,37 @@ def interface():
             continue
         else:
             if choice == 1:
-                vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGBW = opampChooseInput()
-                freq, vNoise, iNoise = opAmpNoise(vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGBW)
-                print(freq, vNoise, iNoise)
-                genericOpAmpNoisePlot(freq, vNoise, iNoise)
+                vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, inoise_at_hz, amp_gain_bandwidth = opamp_choose_input()
+                freq, vnoise, inoise = opamp_noise(vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, inoise_at_hz, amp_gain_bandwidth)
+                print(freq, vnoise, inoise)
+                generic_opamp_noise_plot(freq, vnoise, inoise)
             elif choice == 2:
-                invertingTopoImageDisplay()
+                inverting_topo_image_display()
                 # Topology specific parameters
                 temp = float(input("Input temp (C): "))
-                Rsource = float(input("Input Rsource (Ohm): "))
-                rOne = float(input("Input R1 (Ohm): "))
-                rTwo = float(input("Input R2 (Ohm): "))
-                rThree = float(input("Input R3 (Ohm): "))
-                atFreq = float(input("Input reference freq (Hz), default 1000: "))
-                lowFreqOfInterest = float(input("Input lower freq of interest (Hz): "))
-                highFreqOfInterest = float(input("Input upper freq of interest (Hz): "))
+                r_source = float(input("Input r_source (Ohm): "))
+                r_one = float(input("Input R1 (Ohm): "))
+                r_two = float(input("Input R2 (Ohm): "))
+                r_three = float(input("Input R3 (Ohm): "))
+                at_freq = float(input("Input reference freq (Hz), default 1000: "))
+                low_freq_of_interest = float(input("Input lower freq of interest (Hz): "))
+                high_freq_of_interest = float(input("Input upper freq of interest (Hz): "))
 
                 # Op-amp specific parameters based on datasheet
-                vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGainBW = opampChooseInput()
+                vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, inoise_at_hz, amp_gain_bandwidth = opamp_choose_input()
 
                 # Integrated noise over frequency
-                maxNoiseBW, integradedNoise = invertingIntegratedNoise(Rsource, rOne, rTwo, rThree, lowFreqOfInterest, highFreqOfInterest, ampGainBW, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz, temp)
-                print("Max Noise BW:", maxNoiseBW, " Hz")
-                print("Noise over bandwidth: ", integradedNoise, " Vrms")
+                max_noise_bandwidth, integrated_noise = inverting_integrated_noise(r_source, r_one, r_two, r_three, low_freq_of_interest, high_freq_of_interest, amp_gain_bandwidth, vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, at_freq, inoise_at_hz, temp)
+                print("Max Noise BW:", max_noise_bandwidth, " Hz")
+                print("Noise over bandwidth: ", integrated_noise, " Vrms")
                 
                 # Totatl RTI noise
-                RTINoise = invertingRTINoise(Rsource, rOne, rTwo, rThree, vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, atFreq, iNoiseAtHz, temp)
-                print("RTI Noise: ", RTINoise, " V/sqrt(Hz)")
+                rti_noise = inverting_rti_noise(r_source, r_one, r_two, r_three, vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, at_freq, inoise_at_hz, temp)
+                print("RTI Noise: ", rti_noise, " V/sqrt(Hz)")
             elif choice == 3:
-                noninvertingTopoImageDisplay()
-                noninvertingTopop()
-                # noisePlotter(freq, vNoise, iNoise)  # TODO: generic noise plotter
+                noninverting_topo_image_display()
+                noninverting_topo()
+                # noisePlotter(freq, vnoise, inoise)  # TODO: generic noise plotter
             else:
                 print("Please choose options 1, 2, or 3.")
                 continue

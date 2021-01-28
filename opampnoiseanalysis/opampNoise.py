@@ -11,129 +11,129 @@ import numpy as np
 import pandas as pd
 from opampnoiseanalysis.plotter import *
 
-# freqRange = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000, 2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
-# opAmpVnoise = np.array([])
-# opAmpInoise = np.array([])
-# vnoiseAtOneHz = 50e-9  # V/sqrt(Hz)
-# vnoiseAtHighHz = 8.0e-9  # V/sqrt(Hz)
-# inoiseAtOneHz = 200e-12  # A/sqrt(Hz)
-# inoiseAtHighHz = 1050e-12  # A/sqrt(Hz)
-# iNoiseAtOpAmpFreq = 0  # Hz
+# freq_range = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000, 2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
+# opamp_vnoise = np.array([])
+# opamp_inoise = np.array([])
+# vnoise_low_hz = 50e-9  # V/sqrt(Hz)
+# vnoise_high_hz = 8.0e-9  # V/sqrt(Hz)
+# inoise_low_hz = 200e-12  # A/sqrt(Hz)
+# inoise_high_hz = 1050e-12  # A/sqrt(Hz)
+# inoise_at_hz = 0  # Hz
 # uGBW = 1.0e6 # Hz
 
 
-def opAmpNoise(vnoiseAtOneHz, vnoiseAtHighHz, inoiseAtOneHz, inoiseAtHighHz, iNoiseAtOpAmpFreq=None, ampGBW=None):
+def opamp_noise(vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, inoise_at_hz=None, amp_gain_bandwidth=None):
     """Op-amp intrinsic noise calculation.
 
     Args:
-        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet)
-        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
-        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
-        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
-        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        vnoise_low_hz: op-amp voltage noise at low freq (based on datasheet)
+        vnoise_high_hz: op-amp voltage noise at high freq (based on datasheet)
+        inoise_low_hz: op-amp current noise at low freq (based on datasheet)
+        inoise_high_hz: op-amp current noise at high freq (based on datasheet)
+        inoise_at_hz: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
 
     Returns:
-        freqRange: frequency range, 1 - 1 MHz (Hz)
-        opAmpVnoise: op-amp voltage noise at frequencies in range (V/sqrt(Hz))
-        opAmpInoise: op-amp current noise at frequencies in range (A/sqrt(Hz))
+        freq_range: frequency range, 1 - 1 MHz (Hz)
+        opamp_vnoise: op-amp voltage noise at frequencies in range (V/sqrt(Hz))
+        opamp_inoise: op-amp current noise at frequencies in range (A/sqrt(Hz))
     """
-    iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq  # set iNoiseAtOpAmpFreq to 0 as default
-    ampGBW = 1e6 if ampGBW is None else ampGBW # set unity gain bandwidth to resonable default if not included
-    freqRange = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000,
+    inoise_at_hz = 0 if inoise_at_hz is None else inoise_at_hz  # set inoise_at_hz to 0 as default
+    amp_gain_bandwidth = 1e6 if amp_gain_bandwidth is None else amp_gain_bandwidth # set unity gain bandwidth to resonable default if not included
+    freq_range = np.array([1, 2, 5, 10, 22, 46, 100, 215, 463, 1000,
                           2150, 4630, 10000, 21500, 46300, 100000, 215000, 463000, 1000000])
-    opAmpVnoise = np.array([])
-    opAmpInoise = np.array([])
-    for i, element in enumerate(freqRange):
-        vNoise = np.sqrt(np.square(vnoiseAtHighHz) + np.square(vnoiseAtOneHz) / element)
-        opAmpVnoise = np.append(opAmpVnoise, vNoise)
+    opamp_vnoise = np.array([])
+    opamp_inoise = np.array([])
+    for i, element in enumerate(freq_range):
+        vnoise = np.sqrt(np.square(vnoise_high_hz) + np.square(vnoise_low_hz) / element)
+        opamp_vnoise = np.append(opamp_vnoise, vnoise)
 
-    for i, element in enumerate(freqRange):
-        if not iNoiseAtOpAmpFreq:
-            iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) / element)
-            opAmpInoise = np.append(opAmpInoise, iNoise)
+    for i, element in enumerate(freq_range):
+        if not inoise_at_hz:
+            inoise = np.sqrt(np.square(inoise_low_hz) + np.square(inoise_high_hz) / element)
+            opamp_inoise = np.append(opamp_inoise, inoise)
         else:
             # This is a little off
-            iNoise = np.sqrt(np.square(inoiseAtOneHz) + np.square(inoiseAtHighHz) * np.square(element) / np.square(iNoiseAtOpAmpFreq))
-            opAmpInoise = np.append(opAmpInoise, iNoise)
+            inoise = np.sqrt(np.square(inoise_low_hz) + np.square(inoise_high_hz) * np.square(element) / np.square(inoise_at_hz))
+            opamp_inoise = np.append(opamp_inoise, inoise)
     
-    return freqRange, opAmpVnoise, opAmpInoise
+    return freq_range, opamp_vnoise, opamp_inoise
 
-def opampVNoiseAtFreq(vnoiseAtOneHz, vnoiseAtHighHz, atFreq=None):
+def opamp_vnoise_at_freq(vnoise_low_hz, vnoise_high_hz, at_freq=None):
     """Op-amp intrinsic voltage noise calculation at specified frequency.
 
     Args:
-        atFreq: specified frequency, default=1000 (Hz)
-        vnoiseAtOneHz: op-amp voltage noise at low freq (based on datasheet) 
-        vnoiseAtHighHz: op-amp voltage noise at high freq (based on datasheet)
+        at_freq: specified frequency, default=1000 (Hz)
+        vnoise_low_hz: op-amp voltage noise at low freq (based on datasheet) 
+        vnoise_high_hz: op-amp voltage noise at high freq (based on datasheet)
 
     Returns:
-        opampVnoiseAtFreq: op-amp voltage noise at specified frequency (V/sqrt(Hz))
+        opamp_vnoise_at_freq: op-amp voltage noise at specified frequency (V/sqrt(Hz))
     """
-    atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
-    opampVnoiseAtFreq = np.sqrt(np.square(vnoiseAtHighHz) + np.square(vnoiseAtOneHz) / atFreq)
-    return opampVnoiseAtFreq
+    at_freq = 1000 if at_freq is None else at_freq  # set at_freq to 1 kHz as default
+    opamp_vnoise_at_freq = np.sqrt(np.square(vnoise_high_hz) + np.square(vnoise_low_hz) / at_freq)
+    return opamp_vnoise_at_freq
 
-def opampINoiseAtFreq(inoiseAtOneHz, inoiseAtHighHz, atFreq=None, iNoiseAtOpAmpFreq=None):
+def opamp_inoise_at_freq(inoise_low_hz, inoise_high_hz, at_freq=None, inoise_at_hz=None):
     """Op-amp intrinsic current noise calculation at specified frequency.
 
     Args:
-        atFreq: specified frequency, default=1000 (Hz)
-        inoiseAtOneHz: op-amp current noise at low freq (based on datasheet)
-        inoiseAtHighHz: op-amp current noise at high freq (based on datasheet)
-        iNoiseAtOpAmpFreq: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        at_freq: specified frequency, default=1000 (Hz)
+        inoise_low_hz: op-amp current noise at low freq (based on datasheet)
+        inoise_high_hz: op-amp current noise at high freq (based on datasheet)
+        inoise_at_hz: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
 
     Returns:
-        opampINoiseAtFreq: op-amp current noise at specified frequency (A/sqrt(Hz))
+        opamp_inoise_at_freq: op-amp current noise at specified frequency (A/sqrt(Hz))
     """
-    atFreq = 1000 if atFreq is None else atFreq  # set atFreq to 1 kHz as default
-    iNoiseAtOpAmpFreq = 0 if iNoiseAtOpAmpFreq is None else iNoiseAtOpAmpFreq
-    if not iNoiseAtOpAmpFreq:
-        opampINoiseAtFreq = np.sqrt(np.square(inoiseAtOneHz) +
-                         np.square(inoiseAtHighHz) / atFreq)
+    at_freq = 1000 if at_freq is None else at_freq  # set at_freq to 1 kHz as default
+    inoise_at_hz = 0 if inoise_at_hz is None else inoise_at_hz
+    if not inoise_at_hz:
+        opamp_inoise_at_freq = np.sqrt(np.square(inoise_low_hz) +
+                         np.square(inoise_high_hz) / at_freq)
     else:
-        opampINoiseAtFreq = np.sqrt(np.square(inoiseAtOneHz) + np.square(
-            inoiseAtHighHz) + np.square(element) / np.square(iNoiseAtOpAmpFreq))
-    return opampINoiseAtFreq
+        opamp_inoise_at_freq = np.sqrt(np.square(inoise_low_hz) + np.square(
+            inoise_high_hz) + np.square(element) / np.square(inoise_at_hz))
+    return opamp_inoise_at_freq
 
-def opampChooseInput():
+def opamp_choose_input():
     """Helper function for user to choose between inputing discrete vlaues or import via csv file.
 
     Args:
         None
     
     Returns:
-        vNoiseOneHz: op-amp voltage noise at low freq (based on datasheet) 
-        vNoiseHighHz: op-amp voltage noise at high freq (based on datasheet)
-        iNoiseOneHz: op-amp current noise at low freq (based on datasheet)
-        iNoiseHighHz: op-amp current noise at high freq (based on datasheet)
-        iNoiseAtHz: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
-        ampGBW: op-amp unity gain bandwidth
+        vnoise_low_hz: op-amp voltage noise at low freq (based on datasheet) 
+        vnoise_high_hz: op-amp voltage noise at high freq (based on datasheet)
+        inoise_low_hz: op-amp current noise at low freq (based on datasheet)
+        inoise_high_hz: op-amp current noise at high freq (based on datasheet)
+        inoise_at_hz: (specific to JFET-input type op-amps) current noise increase with freq (based on datasheet), default=0
+        amp_gain_bandwidth: op-amp unity gain bandwidth
     """
-    opampChoice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
-    if opampChoice == 1:        
+    opamp_choice = int(input("Input (1) op-amp values or (2) pick op-amp: "))
+    if opamp_choice == 1:        
         # direct input of op-amp values
-        vNoiseOneHz = float(input("Vnoise @ 1 Hz: "))
-        vNoiseHighHz = float(input("Vnoise @ 10 MHz: "))
-        iNoiseOneHz = float(input("Inoise @ 1 Hz: "))
-        iNoiseHighHz = float(input("Inoise @ 10 MHz: "))
-        iNoiseAtHz = float(input("Inoise Freq (default = 0): "))
-        ampGBW = float(input("Input op-amp unity gain BW (Hz): "))
-    elif opampChoice == 2:
-        opampName = str(input("Input op-amp name: "))
+        vnoise_low_hz = float(input("vnoise @ 1 Hz: "))
+        vnoise_high_hz = float(input("vnoise @ 10 MHz: "))
+        inoise_low_hz = float(input("inoise @ 1 Hz: "))
+        inoise_high_hz = float(input("inoise @ 10 MHz: "))
+        inoise_at_hz = float(input("inoise Freq (default = 0): "))
+        amp_gain_bandwidth = float(input("Input op-amp unity gain BW (Hz): "))
+    elif opamp_choice == 2:
+        opamp_name = str(input("Input op-amp name: "))
         # Search and pick op-amp
         # csv format: Device, VnoiseLow, VnoiseHigh, InoiseLow, InoiseHigh, InoiseSpecFreq, UGBW
         opamps = pd.read_csv('./opampdata/opampData.csv')
-        oneAmp = opamps.loc[opamps['Device'] == opampName]
+        single_opamp = opamps.loc[opamps['Device'] == opamp_name]
         # if Pandas version is < version 0.24
-        specificAmp = oneAmp.values
+        specific_opamp_values = single_opamp.values
         # if Pandas version is > version 0.24
-        # specificAmp = oneAmp.to_numpy(copy=True)
-        vNoiseOneHz = specificAmp[0, 1]
-        vNoiseHighHz = specificAmp[0, 2]
-        iNoiseOneHz = specificAmp[0, 3]
-        iNoiseHighHz = specificAmp[0, 4]
-        iNoiseAtHz = specificAmp[0, 5]
-        ampGBW = specificAmp[0,6]
+        # specific_opamp_values = single_opamp.to_numpy(copy=True)
+        vnoise_low_hz = specific_opamp_values[0, 1]
+        vnoise_high_hz = specific_opamp_values[0, 2]
+        inoise_low_hz = specific_opamp_values[0, 3]
+        inoise_high_hz = specific_opamp_values[0, 4]
+        inoise_at_hz = specific_opamp_values[0, 5]
+        amp_gain_bandwidth = specific_opamp_values[0,6]
     else:
         print("Please choose either (1) op-amp values or (2) pick op-amp.")
-    return vNoiseOneHz, vNoiseHighHz, iNoiseOneHz, iNoiseHighHz, iNoiseAtHz, ampGBW
+    return vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz, inoise_at_hz, amp_gain_bandwidth

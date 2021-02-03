@@ -9,7 +9,7 @@ Author: Douglass Murray
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from opampnoiseanalysis.opamp_noise import *
+from opampnoiseanalysis.opampnoise import *
 
 def generic_opamp_noise_plot(freqs, vnoise, inoise):
     """Plots spectral voltage noise density of op-amp.

@@ -8,7 +8,7 @@ Author: Douglass Murray
 """
 import numpy as np
 import pandas as pd
-from opampnoiseanalysis.opamp_noise import *
+from opampnoiseanalysis.opampnoise import *
 from opampnoiseanalysis.inverting import *
 from opampnoiseanalysis.plotter import *
 

@@ -9,7 +9,7 @@ Author: Douglass Murray
 import os
 import numpy as np
 import matplotlib.image as img
-from opampnoiseanalysis.opamp_noise import *
+from opampnoiseanalysis.opampnoise import *
 
 def inverting_topo_image_display():
     """Displays inverting op-amp topology pic."""

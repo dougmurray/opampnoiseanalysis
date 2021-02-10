@@ -10,6 +10,7 @@ from opampnoiseanalysis.opampnoise import *
 from opampnoiseanalysis.inverting import *
 from opampnoiseanalysis.plotter import *
 
+
 def interface():
     """General interface function for choosing which op-amp/topology to
         calculate noise."""
@@ -77,6 +78,7 @@ def interface():
             else:
                 print("Please choose options 1, 2, or 3.")
                 continue
+
 
 if __name__ == '__main__':
     print(r"   ____           ___                       _   __      _              ______      __    ")

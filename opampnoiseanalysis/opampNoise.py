@@ -160,5 +160,5 @@ def opamp_choose_input():
     else:
         print("Please choose either (1) op-amp values or (2) pick op-amp.")
 
-    return vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
-    inoise_at_hz, amp_gain_bandwidth
+    return (vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
+            inoise_at_hz, amp_gain_bandwidth)

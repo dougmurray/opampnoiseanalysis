@@ -23,8 +23,8 @@ def interface():
             continue
         else:
             if choice == 1:
-                vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
-                inoise_at_hz, amp_gain_bandwidth = opamp_choose_input()
+                (vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
+                 inoise_at_hz, amp_gain_bandwidth) = opamp_choose_input()
                 freq, vnoise, inoise = opamp_noise(vnoise_low_hz,
                                                    vnoise_high_hz,
                                                    inoise_low_hz,
@@ -49,16 +49,24 @@ def interface():
                                                     "interest (Hz): "))
 
                 # Op-amp specific parameters based on datasheet
-                vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
-                inoise_at_hz, amp_gain_bandwidth = opamp_choose_input()
+                (vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
+                 inoise_at_hz, amp_gain_bandwidth) = opamp_choose_input()
 
                 # Integrated noise over frequency
-                max_noise_bandwidth, integrated_noise = inverting_integrated_noise(r_source,
-                    r_one, r_two, r_three,
-                    low_freq_of_interest, high_freq_of_interest,
-                    amp_gain_bandwidth, vnoise_low_hz, vnoise_high_hz,
-                    inoise_low_hz, inoise_high_hz, at_freq, inoise_at_hz,
-                    temp)
+                max_noise_bandwidth,
+                integrated_noise = inverting_integrated_noise(r_source,
+                                                              r_one, r_two,
+                                                              r_three,
+                                                              low_freq_of_interest,
+                                                              high_freq_of_interest,
+                                                              amp_gain_bandwidth,
+                                                              vnoise_low_hz,
+                                                              vnoise_high_hz,
+                                                              inoise_low_hz,
+                                                              inoise_high_hz,
+                                                              at_freq,
+                                                              inoise_at_hz,
+                                                              temp)
                 print("Max Noise BW:", max_noise_bandwidth, " Hz")
                 print("Noise over bandwidth: ", integrated_noise, " Vrms")
 

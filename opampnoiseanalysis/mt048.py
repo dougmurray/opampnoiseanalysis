@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 freqs = np.arange(0.1, 1e6)
-noise_corner_freq = 0.7
-opamp_noise = 10e-9
-high_freq_interest = 10
-low_freq_interest = 0.1
+noise_corner_freq = 15
+opamp_noise = 0.9e-9
+high_freq_interest = 700000
+low_freq_interest = 1000
 
 # op-amp spectral noise density (V/sqrt(Hz))
 pink_freq_range = freqs[freqs < noise_corner_freq]
@@ -29,7 +29,8 @@ noise_p_p = 6.6 * rms_total_noise
 print("Noise peak-to-peak (V_p_p): ", noise_p_p)
 
 plt.loglog(freqs, opamp_total_noise_spectral_density)
-plt.title("Total Noise Spectral Density")
+plt.title("Voltage Noise Spectral Density")
+plt.grid(True, which="minor")
 plt.xlabel("Frequnecy (Hz)")
 plt.ylabel("Noise (V/sqrt(Hz))")
 plt.show()

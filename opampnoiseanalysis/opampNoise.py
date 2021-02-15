@@ -50,23 +50,23 @@ def opamp_noise(vnoise_low_hz, vnoise_high_hz, inoise_low_hz, inoise_high_hz,
     opamp_vnoise = np.array([])
     opamp_inoise = np.array([])
     for i, element in enumerate(freq_range):
-        vnoise = np.sqrt(np.square(vnoise_high_hz) + np.square(vnoise_low_hz)
-                         / element)
+        vnoise = (np.sqrt(np.square(vnoise_high_hz) + np.square(vnoise_low_hz)
+                          / element))
         opamp_vnoise = np.append(opamp_vnoise, vnoise)
 
     for i, element in enumerate(freq_range):
         if not inoise_at_hz:
-            inoise = np.sqrt(np.square(inoise_low_hz)
-                             + np.square(inoise_high_hz) / element)
+            inoise = (np.sqrt(np.square(inoise_low_hz)
+                              + np.square(inoise_high_hz) / element))
             opamp_inoise = np.append(opamp_inoise, inoise)
         else:
             # This is a little off
-            inoise = np.sqrt(np.square(inoise_low_hz)
-                             + np.square(inoise_high_hz) * np.square(element)
-                             / np.square(inoise_at_hz))
+            inoise = (np.sqrt(np.square(inoise_low_hz)
+                              + np.square(inoise_high_hz) * np.square(element)
+                              / np.square(inoise_at_hz)))
             opamp_inoise = np.append(opamp_inoise, inoise)
 
-    return freq_range, opamp_vnoise, opamp_inoise
+    return (freq_range, opamp_vnoise, opamp_inoise)
 
 
 def opamp_vnoise_at_freq(vnoise_low_hz, vnoise_high_hz, at_freq=None):
@@ -83,8 +83,8 @@ def opamp_vnoise_at_freq(vnoise_low_hz, vnoise_high_hz, at_freq=None):
     """
     # set at_freq to 1 kHz as default
     at_freq = 1000 if at_freq is None else at_freq
-    opamp_vnoise_at_freq = np.sqrt(np.square(vnoise_high_hz)
-                                   + np.square(vnoise_low_hz) / at_freq)
+    opamp_vnoise_at_freq = (np.sqrt(np.square(vnoise_high_hz)
+                                    + np.square(vnoise_low_hz) / at_freq))
     return opamp_vnoise_at_freq
 
 
@@ -107,11 +107,12 @@ def opamp_inoise_at_freq(inoise_low_hz, inoise_high_hz, at_freq=None,
     at_freq = 1000 if at_freq is None else at_freq
     inoise_at_hz = 0 if inoise_at_hz is None else inoise_at_hz
     if not inoise_at_hz:
-        opamp_inoise_at_freq = np.sqrt(np.square(inoise_low_hz)
-                                       + np.square(inoise_high_hz) / at_freq)
+        opamp_inoise_at_freq = (np.sqrt(np.square(inoise_low_hz)
+                                        + np.square(inoise_high_hz) / at_freq))
     else:
-        opamp_inoise_at_freq = np.sqrt(np.square(inoise_low_hz) + np.square(
-            inoise_high_hz) + np.square(element) / np.square(inoise_at_hz))
+        opamp_inoise_at_freq = (np.sqrt(np.square(inoise_low_hz)
+                                + np.square(inoise_high_hz) + np.square(element)
+                                / np.square(inoise_at_hz)))
     return opamp_inoise_at_freq
 
 

@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 freqs = np.arange(0.1, 1e6)
-noise_corner_freq = 15
+noise_corner_freq = 0.7
 opamp_noise = 0.9e-9
-high_freq_interest = 700000
-low_freq_interest = 1000
+high_freq_interest = 10
+low_freq_interest = 0.1
 
 # op-amp spectral noise density (V/sqrt(Hz))
 pink_freq_range = freqs[freqs < noise_corner_freq]

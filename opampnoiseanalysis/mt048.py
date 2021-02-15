@@ -3,24 +3,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 freqs = np.arange(0.1, 1e6)
-noise_corner_freq = 0.7
+noise_corner_freq = 10
 opamp_noise = 0.9e-9
-high_freq_interest = 10
-low_freq_interest = 0.1
+high_freq_interest = 100
+low_freq_interest = 1
 
 # op-amp spectral noise density (V/sqrt(Hz))
 pink_freq_range = freqs[freqs < noise_corner_freq]
 white_freq_range = freqs[freqs > noise_corner_freq]
-pink_noise_spectral_density = opamp_noise * np.sqrt(noise_corner_freq) * np.sqrt(1 / pink_freq_range)
+pink_noise_spectral_density = (opamp_noise * np.sqrt(noise_corner_freq)
+                                           * np.sqrt(1 / pink_freq_range))
 white_noise_spectral_density = np.full_like(white_freq_range, opamp_noise)
 opamp_total_noise_spectral_density = np.concatenate((pink_noise_spectral_density, white_noise_spectral_density), axis=None)  # V/sqrt(Hz)
 print("Total Spectral Noise Density (V/sqrt(Hz)): ", opamp_total_noise_spectral_density)
 
 # RMS noise (Vrms)
-rms_noise_low_freq = opamp_noise * np.sqrt(noise_corner_freq * np.log(noise_corner_freq / low_freq_interest))
+rms_noise_low_freq = (opamp_noise * np.sqrt(noise_corner_freq
+                                            * np.log(noise_corner_freq
+                                                     / low_freq_interest)))
 rms_noise_high_freq = opamp_noise * np.sqrt(high_freq_interest - noise_corner_freq)
+
 # rms_total_noise = opamp_noise * np.sqrt((noise_corner_freq * np.log(noise_corner_freq / low_freq_interest)) + (high_freq_interest - noise_corner_freq))
-rms_total_noise = np.sqrt(np.square(rms_noise_low_freq) + np.square(rms_noise_high_freq))
+if np.isnan(rms_noise_low_freq):
+    rms_total_noise = rms_noise_high_freq
+else:
+    rms_total_noise = (np.sqrt(np.square(rms_noise_low_freq)
+                       + np.square(rms_noise_high_freq)))
 print("From %f to %f Hz bandwidth" % (low_freq_interest, high_freq_interest))
 print("Total RMS Noise (Vrms): ", rms_total_noise)
 

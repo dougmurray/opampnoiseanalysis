@@ -68,8 +68,8 @@ def inverting_rti_noise(r_source, r_one, r_two, r_three, vnoise_low_hz,
                                         at_freq, inoise_at_hz)
 
     # RTI Noise Contributions (V/sqrt(Hz))
-    inverted_input_rti_noise = opamp_inoise * (r_source + r_one) * r_two
-                               / (r_source + r_one + r_two)  # V/sqrt(Hz)
+    inverted_input_rti_noise = (opamp_inoise * (r_source + r_one) * r_two
+                                / (r_source + r_one + r_two))  # V/sqrt(Hz)
     # Direct contribution in inverted topology
     noninverted_input_rti_noise = opamp_vnoise  # V/sqrt(Hz)
     r_three_noise = resistor_noise(r_three, temp)  # V/sqrt(Hz)
@@ -133,41 +133,41 @@ def inverting_integrated_noise(r_source, r_one, r_two, r_three,
                                         inoise_at_hz)
 
     if max_noise_bandwidth < high_freq_of_interest:
-        r_source_integrated_noise = r_source_noise
+        r_source_integrated_noise = (r_source_noise
+                                     * np.sqrt(max_noise_bandwidth
+                                     - low_freq_of_interest))  # Vrms
+        r_one_integrated_noise = (r_one_noise
+                                  * np.sqrt(max_noise_bandwidth
+                                  - low_freq_of_interest))  # Vrms
+        r_two_integrated_noise = (np.sqrt(max_noise_bandwidth
+                                          - low_freq_of_interest)
+                                          * r_two_noise / gain)  # Vrms
+        r_three_integrated_noise = (r_three_noise
                                     * np.sqrt(max_noise_bandwidth
-                                    - low_freq_of_interest)  # Vrms
-        r_one_integrated_noise = r_one_noise
-                                 * np.sqrt(max_noise_bandwidth
-                                 - low_freq_of_interest)  # Vrms
-        r_two_integrated_noise = np.sqrt(max_noise_bandwidth
-                                         - low_freq_of_interest)
-                                         * r_two_noise / gain  # Vrms
-        r_three_integrated_noise = r_three_noise
-                                   * np.sqrt(max_noise_bandwidth
-                                   - low_freq_of_interest)  # Vrms
+                                    - low_freq_of_interest))  # Vrms
     else:
-        r_source_integrated_noise = r_source_noise
+        r_source_integrated_noise = (r_source_noise
+                                     * np.sqrt(high_freq_of_interest
+                                     - low_freq_of_interest))  # Vrms
+        r_one_integrated_noise = (r_one_noise
+                                  * np.sqrt(high_freq_of_interest
+                                  - low_freq_of_interest))  # Vrms
+        r_two_integrated_noise = (np.sqrt(high_freq_of_interest
+                                          - low_freq_of_interest)
+                                          * r_two_noise / gain)  # Vrms
+        r_three_integrated_noise = (r_three_noise
                                     * np.sqrt(high_freq_of_interest
-                                    - low_freq_of_interest)  # Vrms
-        r_one_integrated_noise = r_one_noise
-                                 * np.sqrt(high_freq_of_interest
-                                 - low_freq_of_interest)  # Vrms
-        r_two_integrated_noise = np.sqrt(high_freq_of_interest
-                                         - low_freq_of_interest)
-                                         * r_two_noise / gain  # Vrms
-        r_three_integrated_noise = r_three_noise
-                                   * np.sqrt(high_freq_of_interest
-                                   - low_freq_of_interest)  # Vrms
+                                    - low_freq_of_interest))  # Vrms
 
     # Vrms, direct contribution in inverted topology
     noninverted_input_integrated_noise = opamp_vnoise
-    inverted_input_integrated_noise = opamp_inoise * r_one
-                                      * r_two / (r_one + r_two)  # Vrms
+    inverted_input_integrated_noise = (opamp_inoise * r_one
+                                       * r_two / (r_one + r_two))  # Vrms
 
-    integrated_noise = gain * np.sqrt(np.square(r_source_integrated_noise)
-                                                + np.square(r_one_integrated_noise)
-                                                + np.square(r_two_integrated_noise)
-                                                + np.square(r_three_integrated_noise)
-                                                + np.square(noninverted_input_integrated_noise)
-                                                + np.square(inverted_input_integrated_noise))  # Vrms
+    integrated_noise = (gain * np.sqrt(np.square(r_source_integrated_noise)
+                                                 + np.square(r_one_integrated_noise)
+                                                 + np.square(r_two_integrated_noise)
+                                                 + np.square(r_three_integrated_noise)
+                                                 + np.square(noninverted_input_integrated_noise)
+                                                 + np.square(inverted_input_integrated_noise)))  # Vrms
     return max_noise_bandwidth, integrated_noise

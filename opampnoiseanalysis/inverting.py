@@ -165,9 +165,9 @@ def inverting_integrated_noise(r_source, r_one, r_two, r_three,
                                        * r_two / (r_one + r_two))  # Vrms
 
     integrated_noise = (gain * np.sqrt(np.square(r_source_integrated_noise)
-                                                 + np.square(r_one_integrated_noise)
-                                                 + np.square(r_two_integrated_noise)
-                                                 + np.square(r_three_integrated_noise)
-                                                 + np.square(noninverted_input_integrated_noise)
-                                                 + np.square(inverted_input_integrated_noise)))  # Vrms
+                                       + np.square(r_one_integrated_noise)
+                                       + np.square(r_two_integrated_noise)
+                                       + np.square(r_three_integrated_noise)
+                                       + np.square(noninverted_input_integrated_noise)
+                                       + np.square(inverted_input_integrated_noise)))  # Vrms
     return max_noise_bandwidth, integrated_noise
